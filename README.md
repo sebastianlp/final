@@ -1,6 +1,6 @@
 ## Build the image
 ```
-docker build -t parcial 
+docker build -t parcial .
 ```
 
 ## Run the image/app
