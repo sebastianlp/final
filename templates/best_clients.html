@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <h1 class="title">Los clientes que mas compraron</h1>
+        </div>
+    </div>
+    {% if bestClients %}
+        <div class="row">
+            <div class="col-xs-12">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Dinero</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in bestClients %}
+                            <tr>
+                                <td>{{ c['name'] }}</td>
+                                <td>{{ c['amount'] }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

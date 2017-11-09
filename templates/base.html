@@ -5,7 +5,9 @@
 {% set navigation_bar = [
     (url_for('private_main'), 'private', 'Inicio'),
     (url_for('product_view'), 'products', 'Productos'),
-    (url_for('client_view'), 'clients', 'Clientes')
+    (url_for('client_view'), 'clients', 'Clientes'),
+    (url_for('best_clients_view'), 'best_clients', 'Mejores clientes'),
+    (url_for('most_products_view'), 'most_productos', 'Productos mas vendidos')
 ] -%}
 
 {% set active_page = active_page|default('index') -%}

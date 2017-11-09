@@ -13,10 +13,10 @@
                     <label for="user">Contraseña</label>
                     <input name="password" type="text" class="form-control" id="password" placeholder="Contraseña">
                 </div>
-                {% if error %}
-                <div class="text-center">
-                    <p class=text-danger><strong>Error:</strong> {{ error }}
-                </div>
+                {% if error == True %}
+                    <div class="text-center">
+                        <p class=text-danger><strong>Ocurrio un error con el login</strong> 
+                    </div>
                 {% endif %}
                 <div class="text-center">
                     <button type="submit" class="btn btn-default">Ingresar</button>

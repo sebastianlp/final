@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row">
         <div class="col-xs-12">
-            <h1 class="title">Clientes</h1>
+            <h1 class="title">Mostrar los productos que compro un cliente</h1>
         </div>
     </div>
     <div class="row">
@@ -20,11 +20,27 @@
             </form>
         </div>
     </div>
-    {% if products is defined %}
+    {% if products %}
         <div class="row">
             <div class="col-xs-12">
-                {{ products }}
+                Productos que compro el cliente: {{ client }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
                 <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in products %}
+                            <tr>
+                                <td>{{ p }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
                 </table>
             </div>
         </div>

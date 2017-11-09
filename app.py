@@ -4,9 +4,6 @@ from wtforms import Form, StringField, PasswordField, validators
 from users.user import UserModel
 from data.sale import SaleModel
 
-S = SaleModel()
-U = UserModel()
-
 app = Flask(__name__)
 Bootstrap(app)
 
@@ -16,21 +13,28 @@ def check_user_logged():
 
     return True
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
 @app.route("/")
 def main():
     return render_template('index.html')
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
-    error = None
-    if request.method == 'POST':
-        username = request.form['username']
-        if U.authenticate(username=username, password=request.form['password']):
-            session['username'] = request.form['username']
-            flash('Login exitoso')
-            return redirect(url_for('private_main'))
-        else:
-            error = 'Credenciales invalidas'
+    error = False
+
+    try:
+        U = UserModel()
+        if request.method == 'POST':
+            username = request.form['username']
+            if U.authenticate(username=username, password=request.form['password']):
+                session['username'] = request.form['username']
+                return redirect(url_for('private_main'))
+    except FileNotFoundError:
+        error = True
+    
     return render_template('login.html', error=error)
 
 @app.route("/logout")
@@ -46,7 +50,16 @@ def private_main():
     if check_user_logged() is False:
         return redirect(url_for('login'))
 
-    return render_template('private.html')
+    error = False
+
+    try:
+        S = SaleModel()
+        data = S.data
+        headers = S.headers
+    except FileNotFoundError:
+        error = True
+
+    return render_template('private.html', data=data, headers=headers, error=error)
 
 @app.route("/client", methods=['GET', 'POST'])
 def client_view():
@@ -54,13 +67,45 @@ def client_view():
         return redirect(url_for('login'))
 
     clientProducts = []
-    client = ''  
+    client = ''
+    error = False
     
-    if request.method == 'POST':
-        client = request.form['client']
-        clientProducts = S.byClient(client)
+    try:
+        S = SaleModel()
+
+        if request.method == 'POST':
+            client = request.form['client']
+            clientProducts = S.byClient(client)
+    except FileNotFoundError:
+        error = True
         
-    return render_template('client.html', client=client, products=clientProducts)
+    return render_template('client.html', client=client, products=clientProducts, error=error)
+
+@app.route("/client/best")
+def best_clients_view():
+    error = False
+    bestClients = []
+
+    try:
+        S = SaleModel()
+        bestClients = S.bestClients()
+    except FileNotFoundError:
+        error = True
+
+    return render_template('best_clients.html', error=error, bestClients=bestClients)
+
+@app.route("/product/most")
+def most_products_view():
+    error = False
+    mostProducts = []
+
+    try:
+        S = SaleModel()
+        mostProducts = S.mostSold()
+    except FileNotFoundError:
+        error = True
+
+    return render_template('most_products.html', error=error, mostProducts=mostProducts)
 
 # @app.route("/clientasd", methods=['GET', 'POST'])
 # def client_view_():
@@ -73,12 +118,18 @@ def product_view():
     
     clients = []
     product = ''
+    error = False
 
-    if request.method == 'POST':
-        product = request.form['product']
-        clients = S.byProduct(product)
+    try:
+        S = SaleModel()
 
-    return render_template('product.html', product=product,clients=clients)
+        if request.method == 'POST':
+            product = request.form['product']
+            clients = S.byProduct(product)
+    except FileNotFoundError:
+        error = True
+        
+    return render_template('product.html', product=product,clients=clients, error=error)
 
 if __name__ == "__main__":
     app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
