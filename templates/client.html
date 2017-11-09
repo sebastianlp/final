@@ -11,7 +11,7 @@
     </div>
     <div class="row">
         <div class="col-xs-4 col-xs-offset-4">
-            <form method="POST">
+            <form method="POST" @submit.prevent="validateThree">
                 <div class="form-group">
                     <label for="client-name">Nombre del cliente</label>
                     <v-select :on-change="consoleCallback" :options="clients"></v-select>
@@ -72,6 +72,14 @@
         methods: {
             consoleCallback(selected) {
                 this.selected = selected
+            },
+            validateThree(event) {
+                if (this.selected.length < 3) {
+                    this.showMoreLettersAlert = true
+                } else {
+                    this.showMoreLettersAlert = false
+                    event.target.submit()
+                }
             }
         }
     });

@@ -45,7 +45,7 @@ class SaleModel():
 
         return set(clients)
 
-    def products():
+    def products(self):
         products = []
 
         # por cada venta voy a armar un arreglo de productos NO repetidos

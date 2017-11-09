@@ -5,6 +5,7 @@ from users.user import UserModel
 from data.sale import SaleModel
 import json
 from Forms.client import ClientForm
+from Forms.Product import ProductForm
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -86,6 +87,30 @@ def client_view():
         
     return render_template('client.html', form=form, clients=json.dumps(clients), client=client, products=clientProducts, error=error)
 
+@app.route("/product", methods=['GET', 'POST'])
+def product_view():
+    if check_user_logged() is False:
+        return redirect(url_for('login'))
+    
+    productsClient = []
+    clients = []
+    product = ''
+    error = False
+    form = ProductForm(request.form)
+
+    try:
+        S = SaleModel()
+        products = list(S.products())
+
+        if request.method == 'POST' and form.validate():
+            product = form.productName.data
+            productsClient = S.byProduct(product)
+    except FileNotFoundError:
+        error = True
+        
+    return render_template('product.html', form=form, products=json.dumps(products), product=product,clients=productsClient, error=error)
+
+
 @app.route("/client/best")
 def best_clients_view():
     error = False
@@ -115,26 +140,6 @@ def most_products_view():
 # @app.route("/clientasd", methods=['GET', 'POST'])
 # def client_view_():
 #     app.logger.info(S.groupBy(S.byClient('pedo')))
-
-@app.route("/product", methods=['GET', 'POST'])
-def product_view():
-    if check_user_logged() is False:
-        return redirect(url_for('login'))
-    
-    clients = []
-    product = ''
-    error = False
-
-    try:
-        S = SaleModel()
-
-        if request.method == 'POST':
-            product = request.form['product']
-            clients = S.byProduct(product)
-    except FileNotFoundError:
-        error = True
-        
-    return render_template('product.html', product=product,clients=clients, error=error)
 
 if __name__ == "__main__":
     app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
