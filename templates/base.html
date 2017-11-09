@@ -2,6 +2,14 @@
 
 {% block title %}Parcial App{% endblock %}
 
+{% set navigation_bar = [
+    (url_for('private_main'), 'private', 'Inicio'),
+    (url_for('product_view'), 'products', 'Productos'),
+    (url_for('client_view'), 'clients', 'Clientes')
+] -%}
+
+{% set active_page = active_page|default('index') -%}
+
 {% block navbar %}
 <nav class="navbar navbar-default">
     <div class="container-fluid">
@@ -12,16 +20,28 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{{ url_for('main') }}">Droggery</a>
+            <a class="navbar-brand" href="{{ url_for('private_main') }}">Droggery</a>
+            {% if session.username %}
+                <ul class="nav navbar-nav">
+                    {% for href, id, caption in navigation_bar %}
+                        {% set class = 'nav-item' %}
+                        {% if(id == active_page) %}
+                            {% set class = class ~ ' active' %}
+                        {% endif %}
+                        <li class="{{ class }}">
+                            <a href="{{ href }}">{{ caption }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
         </div>
         {% if session.username %}
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Acciones <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ session.get('username') }} <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li role="separator" class="divider"></li>
-                            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                            <li><a href="{{ url_for('logout') }}">Salir</a></li>
                         </ul>
                     </li>
                 </ul>

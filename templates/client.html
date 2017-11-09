@@ -2,8 +2,32 @@
 
 {% block content %}
 <div class="container">
-    <h1>Listado N de clientes que mas plata gastaron</h1>
-
-    {{ objects }}
+    <div class="row">
+        <div class="col-xs-12">
+            <h1 class="title">Clientes</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4 col-xs-offset-4">
+            <form method="POST">
+                <div class="form-group">
+                    <label for="client-name">Nombre del cliente</label>
+                    <input name="client" value="{{ client }}" type="text" class="form-control" id="client-name" placeholder="Nombre">
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-default">Buscar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% if products is defined %}
+        <div class="row">
+            <div class="col-xs-12">
+                {{ products }}
+                <table class="table">
+                </table>
+            </div>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}
