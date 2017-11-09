@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 
+{% from "_formhelpers.html" import render_field %}
+
 {% block content %}
-<div class="container">
+<div class="container" id="app">
     <div class="row">
         <div class="col-xs-12">
             <h1 class="title">Mostrar los productos que compro un cliente</h1>
@@ -12,7 +14,11 @@
             <form method="POST">
                 <div class="form-group">
                     <label for="client-name">Nombre del cliente</label>
-                    <input name="client" value="{{ client }}" type="text" class="form-control" id="client-name" placeholder="Nombre">
+                    <v-select :on-change="consoleCallback" :options="clients"></v-select>
+                    <input type="hidden" name="clientName" v-model="selected" />
+                    <small v-if="showMoreLettersAlert">
+                        <span class="text-danger">Escribi por lo menos 3 letras</span>
+                    </small>
                 </div>
                 <div class="text-center">
                     <button type="submit" class="btn btn-default">Buscar</button>
@@ -31,7 +37,7 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Cliente</th>
+                            <th>Productos</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -47,3 +53,27 @@
     {% endif %}
 </div>
 {% endblock %}
+
+{% block custom_scripts %}
+<script src="https://unpkg.com/vue"></script>
+<script src="http://unpkg.com/vue-select@2.0.0"></script>
+
+<script>
+    const clients = {{ clients|safe }};
+    Vue.component('v-select', VueSelect.VueSelect);
+
+    new Vue({
+        el: '#app',
+        data: {
+            selected: '',
+            clients,
+            showMoreLettersAlert: false
+        },
+        methods: {
+            consoleCallback(selected) {
+                this.selected = selected
+            }
+        }
+    });
+</script>
+{%- endblock %}

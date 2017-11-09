@@ -36,6 +36,25 @@ class SaleModel():
         
         return data
 
+    def clients(self):
+        clients = []
+
+        # por cada venta voy a armar un arreglo de clientes NO repetidos
+        for sale in self.data:
+            clients.append(sale.cliente)
+
+        return set(clients)
+
+    def products():
+        products = []
+
+        # por cada venta voy a armar un arreglo de productos NO repetidos
+        for sale in self.data:
+            products.append(sale.producto)
+
+        return set(products)
+        
+
     def byClient(self, client):
         products = []
 
@@ -56,13 +75,7 @@ class SaleModel():
 
     def bestClients(self):
         best = []
-        clients = []
-
-        # por cada venta voy a armar un arreglo de clientes NO repetidos
-        for sale in self.data:
-            clients.append(sale.cliente)
-        
-        clients = set(clients)
+        clients = self.clients()
         
         # por cada cliente de ese arreglo, voy a revisar cada sale y armar el array de bests
         for client in clients:
@@ -76,13 +89,7 @@ class SaleModel():
 
     def mostSold(self):
         most = []
-        products = []
-
-        for sale in self.data:
-            products.append(sale.producto)
-        
-        # con esto lo hago unico
-        products = set(products)
+        products = self.products()
         
         for product in products:
             mostSold = {'name': product, 'quantity': 0}

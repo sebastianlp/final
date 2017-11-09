@@ -3,6 +3,8 @@ from flask_bootstrap import Bootstrap
 from wtforms import Form, StringField, PasswordField, validators
 from users.user import UserModel
 from data.sale import SaleModel
+import json
+from Forms.client import ClientForm
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -67,19 +69,22 @@ def client_view():
         return redirect(url_for('login'))
 
     clientProducts = []
+    clients = []
     client = ''
     error = False
+    form = ClientForm(request.form)
     
     try:
         S = SaleModel()
+        clients = list(S.clients())
 
-        if request.method == 'POST':
-            client = request.form['client']
+        if request.method == 'POST' and form.validate():
+            client = form.clientName.data
             clientProducts = S.byClient(client)
     except FileNotFoundError:
         error = True
         
-    return render_template('client.html', client=client, products=clientProducts, error=error)
+    return render_template('client.html', form=form, clients=json.dumps(clients), client=client, products=clientProducts, error=error)
 
 @app.route("/client/best")
 def best_clients_view():

@@ -52,3 +52,9 @@
     </div>
 </nav>
 {% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{% block custom_scripts %}
+{%- endblock custom_scripts %}
+{%- endblock scripts %}
