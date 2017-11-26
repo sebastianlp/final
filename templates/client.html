@@ -50,6 +50,11 @@
                 </table>
             </div>
         </div>
+        <div class="row">
+            <div class="col-xs-2">
+                <button class="btn btn-primary" @click="exportCsv">Exportar a CSV</button>
+            </div>
+        </div>
     {% endif %}
 </div>
 {% endblock %}
@@ -60,6 +65,8 @@
 
 <script>
     const clients = {{ clients|safe }};
+    const products = {{ products|safe }};
+    const client = '{{ client|safe }}';
     Vue.component('v-select', VueSelect.VueSelect);
 
     new Vue({
@@ -70,6 +77,22 @@
             showMoreLettersAlert: false
         },
         methods: {
+            exportCsv(event) {
+                const rows = products
+                let csvContent = "data:text/csv;charset=utf-8,";
+                rows.forEach(function (rowArray) {
+                    rowArray = rowArray + ',' + client
+                    csvContent += rowArray + "\r\n"; // add carriage return
+                });
+
+                var encodedUri = encodeURI(csvContent);
+                var link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "productos.csv");
+                document.body.appendChild(link); // Required for FF
+
+                link.click(); //
+            },
             consoleCallback(selected) {
                 this.selected = selected
             },
