@@ -40,9 +40,36 @@ def login():
     
     return render_template('login.html', error=error)
 
+@app.route("/change-password", methods=['GET', 'POST'])
+def change_password():
+    if check_user_logged() is False:
+        return redirect(url_for('login'))
+
+    error = False
+    msg = 'Ocurrio un error generico al cambiar la contraseña'
+
+    try:
+        U = UserModel()
+        if request.method == 'POST':
+            if request.form['old_password'] and request.form['new_password']:
+                if U.changePassword(session['username'], request.form['old_password'], request.form['new_password']):
+                    return redirect(url_for('private_main'))
+                else:
+                    error = True
+                    msg = 'No se pudo cambiar la contraseña. Intenta nuevamente.'
+            else:
+                error = True
+                msg = 'Faltan datos para realizar el cambio'
+    except FileNotFoundError:
+        error = True
+        msg = 'Ocurrio un error con la base de datos'
+
+    return render_template('change-password.html', error=error, msg=msg)
+                    
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     error = False
+    msg = 'Ocurrio un error generico al registrarse'
 
     try:
         U = UserModel()
@@ -52,12 +79,15 @@ def register():
                     return redirect(url_for('login'))
                 else:
                     error = True
+                    msg = 'Ocurrio un error registrando al usuario'
             else:
                 error = True
+                msg = 'Usuario y/o contraseña invalidos'
     except FileNotFoundError:
         error = True
+        msg = 'Ocurrio un error con la base de datos'
         
-    return render_template('register.html', error=error)
+    return render_template('register.html', error=error, msg=msg)
 
 @app.route("/logout")
 def logout():

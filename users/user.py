@@ -1,4 +1,6 @@
 import csv
+import os
+from shutil import copyfile
 
 class UserModel():
     def get_file_name(self):
@@ -18,15 +20,26 @@ class UserModel():
         return False
 
     def register(self, username, password):
-        # hay que validar que el nombre no este usado
-        with open(self.get_file_name(), 'r') as rf:
-            reader = csv.reader(rf)
+        with open(self.get_file_name(), 'r') as readFile, open(self.get_file_name(), 'a') as writeFile:
+            reader = csv.reader(readFile)
+            writer = csv.writer(writeFile)
             for row in reader:
                 if row[0] == username:
                     return False
-
-        with open(self.get_file_name(), 'a') as f:
-            writer = csv.writer(f)
             writer.writerow([username, password])
-        
-        return True
+            return True
+    
+    def changePassword(self, username, oldPassword, newPassword):
+        copyfile(self.get_file_name(), './users/users.copy.csv')
+        with open(self.get_file_name(), 'r') as readFile, open('./users/users.copy.csv', 'w') as writeFile:
+            reader = csv.reader(readFile)
+            writer = csv.writer(writeFile)
+            for row in reader:
+                if row[0] == username:
+                    if row[1] == oldPassword:
+                        writer.writerow([row[0], newPassword])
+                        os.remove(self.get_file_name())
+                        os.rename('./users/users.copy.csv', self.get_file_name())
+                        return True
+            
+            return False
