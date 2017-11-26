@@ -16,3 +16,17 @@ class UserModel():
                     return True
         
         return False
+
+    def register(self, username, password):
+        # hay que validar que el nombre no este usado
+        with open(self.get_file_name(), 'r') as rf:
+            reader = csv.reader(rf)
+            for row in reader:
+                if row[0] == username:
+                    return False
+
+        with open(self.get_file_name(), 'a') as f:
+            writer = csv.writer(f)
+            writer.writerow([username, password])
+        
+        return True

@@ -40,6 +40,25 @@ def login():
     
     return render_template('login.html', error=error)
 
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    error = False
+
+    try:
+        U = UserModel()
+        if request.method == 'POST':
+            if request.form['username'] and request.form['password']:
+                if U.register(request.form['username'], request.form['password']):
+                    return redirect(url_for('login'))
+                else:
+                    error = True
+            else:
+                error = True
+    except FileNotFoundError:
+        error = True
+        
+    return render_template('register.html', error=error)
+
 @app.route("/logout")
 def logout():
     if check_user_logged() is False:
