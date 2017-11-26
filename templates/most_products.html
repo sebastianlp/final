@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
+<div class="container" id="app">
     <div class="row">
         <div class="col-xs-12">
             <h1 class="title">Los productos que mas se vendieron</h1>
@@ -28,6 +28,56 @@
                 </table>
             </div>
         </div>
+        <div class="row">
+            <div class="col-xs-2">
+                <button class="btn btn-primary" @click="exportCsv">Exportar a CSV</button>
+            </div>
+        </div>
     {% endif %}
 </div>
 {% endblock %}
+
+{% block custom_scripts %}
+<script src="https://unpkg.com/vue"></script>
+
+<script>
+    let data = {{ mostProducts| safe }};
+    const mostProducts = flat(data);
+
+    function flat(arrData) {
+        let arr = [];
+        arrData.forEach(val => {
+            let data = Object.keys(val).map(function (key) { return val[key] })
+            let cl = []
+            data.forEach(row => {
+                cl.push(row)
+            })
+            arr.push(cl)
+        })
+
+        return arr
+    }
+
+    new Vue({
+        el: '#app',
+        methods: {
+            exportCsv(event) {
+                const rows = mostProducts
+                let csvContent = "data:text/csv;charset=utf-8,";
+                rows.forEach(function (rowArray) {
+                    ;
+                    let row = rowArray.join(",");
+                    csvContent += row + "\r\n"; // add carriage return
+                });
+
+                var encodedUri = encodeURI(csvContent);
+                var link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "productos_mas_vendidos.csv");
+                document.body.appendChild(link); // Required for FF
+
+                link.click(); //
+            }
+        }
+    });
+</script> {%- endblock %}
